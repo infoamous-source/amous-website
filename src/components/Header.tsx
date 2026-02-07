@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { NAV_LINKS } from "@/lib/constants";
 
 export default function Header() {
@@ -24,6 +25,14 @@ export default function Header() {
     return () => { document.body.style.overflow = ""; };
   }, [isMobileOpen]);
 
+  const isExternalLink = (link: typeof NAV_LINKS[number]) => {
+    return "external" in link && link.external;
+  };
+
+  const isAbsoluteLink = (href: string) => {
+    return href.startsWith("/") || href.startsWith("http");
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -35,14 +44,14 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2 group">
             <div className={`text-2xl font-bold tracking-tight transition-colors ${
               isScrolled ? "text-navy-800" : "text-white"
             }`}>
               <span className="text-navy-800">A</span>
               <span className={isScrolled ? "text-gray-700" : "text-white"}>MOUS</span>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1">
@@ -53,21 +62,55 @@ export default function Header() {
                 onMouseEnter={() => link.children && setOpenDropdown(link.label)}
                 onMouseLeave={() => setOpenDropdown(null)}
               >
-                <a
-                  href={link.href}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    isScrolled
-                      ? "text-gray-700 hover:text-navy-800 hover:bg-navy-50"
-                      : "text-white/90 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  {link.label}
-                  {link.children && (
-                    <svg className="inline-block ml-1 w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                {isExternalLink(link) ? (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors inline-flex items-center gap-1 ${
+                      isScrolled
+                        ? "text-gray-700 hover:text-navy-800 hover:bg-navy-50"
+                        : "text-white/90 hover:text-white hover:bg-white/10"
+                    }`}
+                  >
+                    {link.label}
+                    <svg className="w-3 h-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                     </svg>
-                  )}
-                </a>
+                  </a>
+                ) : isAbsoluteLink(link.href) ? (
+                  <Link
+                    href={link.href}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      isScrolled
+                        ? "text-gray-700 hover:text-navy-800 hover:bg-navy-50"
+                        : "text-white/90 hover:text-white hover:bg-white/10"
+                    }`}
+                  >
+                    {link.label}
+                    {link.children && (
+                      <svg className="inline-block ml-1 w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    )}
+                  </Link>
+                ) : (
+                  <a
+                    href={link.href}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      isScrolled
+                        ? "text-gray-700 hover:text-navy-800 hover:bg-navy-50"
+                        : "text-white/90 hover:text-white hover:bg-white/10"
+                    }`}
+                  >
+                    {link.label}
+                    {link.children && (
+                      <svg className="inline-block ml-1 w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    )}
+                  </a>
+                )}
 
                 {/* Dropdown */}
                 <AnimatePresence>
@@ -80,13 +123,13 @@ export default function Header() {
                       className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 overflow-hidden"
                     >
                       {link.children.map((child) => (
-                        <a
+                        <Link
                           key={child.label}
                           href={child.href}
                           className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-navy-50 hover:text-navy-800 transition-colors"
                         >
                           {child.label}
-                        </a>
+                        </Link>
                       ))}
                     </motion.div>
                   )}
@@ -136,24 +179,47 @@ export default function Header() {
             <nav className="max-w-7xl mx-auto px-4 py-6 space-y-1">
               {NAV_LINKS.map((link) => (
                 <div key={link.label}>
-                  <a
-                    href={link.href}
-                    onClick={() => setIsMobileOpen(false)}
-                    className="block px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-navy-50 hover:text-navy-800 transition-colors"
-                  >
-                    {link.label}
-                  </a>
+                  {isExternalLink(link) ? (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsMobileOpen(false)}
+                      className="flex items-center gap-2 px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-navy-50 hover:text-navy-800 transition-colors"
+                    >
+                      {link.label}
+                      <svg className="w-3 h-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                      </svg>
+                    </a>
+                  ) : isAbsoluteLink(link.href) ? (
+                    <Link
+                      href={link.href}
+                      onClick={() => setIsMobileOpen(false)}
+                      className="block px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-navy-50 hover:text-navy-800 transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={link.href}
+                      onClick={() => setIsMobileOpen(false)}
+                      className="block px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-navy-50 hover:text-navy-800 transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  )}
                   {link.children && (
                     <div className="ml-4 space-y-1">
                       {link.children.map((child) => (
-                        <a
+                        <Link
                           key={child.label}
                           href={child.href}
                           onClick={() => setIsMobileOpen(false)}
                           className="block px-4 py-2 text-sm text-gray-500 hover:text-navy-800 transition-colors"
                         >
                           {child.label}
-                        </a>
+                        </Link>
                       ))}
                     </div>
                   )}

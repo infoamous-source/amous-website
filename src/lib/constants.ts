@@ -1,19 +1,21 @@
+// 네비게이션 링크 (3개 카테고리 재편)
 export const NAV_LINKS = [
   { label: "회사 소개", href: "#about" },
   {
     label: "교육 서비스",
     href: "#services",
     children: [
-      { label: "이주민/유학생", href: "#services" },
-      { label: "중장년/실버", href: "#services" },
-      { label: "청년", href: "#services" },
-      { label: "아동/청소년", href: "#services" },
-      { label: "기업", href: "#services" },
+      { label: "이주민·유학생", href: "/services/immigrant" },
+      { label: "중장년·시니어", href: "/services/senior" },
+      { label: "취업·진로", href: "/services/career" },
     ],
   },
-  { label: "강사진 소개", href: "#instructors" },
-  { label: "협업 사례", href: "#cases" },
-  { label: "블로그", href: "#blog" },
+  { label: "협업 사례", href: "/cases" },
+  {
+    label: "블로그",
+    href: "https://blog.naver.com/amous_edu",
+    external: true,
+  },
   {
     label: "계열사",
     href: "#affiliates",
@@ -24,51 +26,43 @@ export const NAV_LINKS = [
   },
 ];
 
+// 교육 서비스 (3개 카테고리 - Supabase fallback)
 export const SERVICES = [
   {
-    id: "immigrant",
-    title: "이주민/유학생",
+    id: 1,
+    slug: "immigrant",
+    title: "이주민·유학생",
     subtitle: "한국 정착의 첫걸음",
     description:
       "한국어 교육부터 문화 적응, 취업 준비까지. 이주민과 유학생이 한국 사회에 성공적으로 정착할 수 있도록 맞춤형 교육을 제공합니다.",
     icon: "globe",
     color: "from-blue-500 to-cyan-400",
+    page_content: "",
+    sort_order: 0,
   },
   {
-    id: "senior",
-    title: "중장년/실버",
+    id: 2,
+    slug: "senior",
+    title: "중장년·시니어",
     subtitle: "인생 2막의 시작",
     description:
       "풍부한 경험을 새로운 역량으로. 디지털 리터러시, 재취업 교육, 사회 참여 프로그램을 통해 활기찬 시니어 라이프를 설계합니다.",
     icon: "heart",
     color: "from-emerald-500 to-teal-400",
+    page_content: "",
+    sort_order: 1,
   },
   {
-    id: "youth",
-    title: "청년",
+    id: 3,
+    slug: "career",
+    title: "취업·진로",
     subtitle: "꿈을 현실로",
     description:
-      "면접·스피치·자기소개서 코칭부터 커리어 설계까지. 아나운서 출신 전문가의 실전 노하우로 취업 성공률을 높입니다.",
+      "면접·스피치·자기소개서 코칭부터 커리어 설계까지. 현직 아나운서 출신 전문가의 실전 노하우로 취업 성공률을 높입니다.",
     icon: "rocket",
     color: "from-violet-500 to-purple-400",
-  },
-  {
-    id: "children",
-    title: "아동/청소년",
-    subtitle: "미래의 리더를 키우다",
-    description:
-      "발표력, 리더십, 커뮤니케이션 능력을 키우는 체계적인 프로그램. 자신감 있는 표현력으로 아이들의 가능성을 열어줍니다.",
-    icon: "star",
-    color: "from-amber-500 to-orange-400",
-  },
-  {
-    id: "corporate",
-    title: "기업",
-    subtitle: "조직의 성장 파트너",
-    description:
-      "임직원 커뮤니케이션, 프레젠테이션, 리더십 교육. 기업 맞춤형 솔루션으로 조직의 역량을 한 단계 끌어올립니다.",
-    icon: "building",
-    color: "from-rose-500 to-pink-400",
+    page_content: "",
+    sort_order: 2,
   },
 ];
 
@@ -99,12 +93,16 @@ export const AFFILIATES = [
 ];
 
 export const CONTACT_FIELDS = [
-  "이주민/유학생 교육",
-  "중장년/실버 교육",
-  "청년 취업 코칭",
-  "아동/청소년 교육",
-  "기업 교육",
-  "건축 CG/시각화",
+  "이주민·유학생 교육",
+  "중장년·시니어 교육",
+  "취업·진로 코칭",
   "행사 기획",
+  "건축 CG/시각화",
   "기타",
+];
+
+export const SERVICE_CATEGORIES = [
+  { slug: "immigrant", label: "이주민·유학생" },
+  { slug: "senior", label: "중장년·시니어" },
+  { slug: "career", label: "취업·진로" },
 ];
