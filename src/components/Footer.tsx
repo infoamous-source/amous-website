@@ -10,26 +10,26 @@ export default function Footer() {
         <div className="py-16 grid md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 370" className="h-10 w-auto">
-                <g transform="translate(300, 170)">
-                  <line x1="-52" y1="70" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="1.5" opacity="0.7"/>
-                  <line x1="52" y1="70" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="1.5" opacity="0.7"/>
-                  <line x1="-30" y1="15" x2="30" y2="15" stroke="#C9D6E8" strokeWidth="1.5" opacity="0.7"/>
-                  <line x1="-30" y1="15" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="0.5" opacity="0.21"/>
-                  <line x1="30" y1="15" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="0.5" opacity="0.21"/>
-                  <circle cx="0" cy="-80" r="12" fill="#C8A84E" opacity="0.08"/>
-                  <circle cx="0" cy="-80" r="4" fill="#FFFFFF"/>
-                  <circle cx="0" cy="-80" r="2" fill="#C8A84E"/>
-                  <circle cx="-52" cy="70" r="3.5" fill="#FFFFFF"/>
-                  <circle cx="-52" cy="70" r="1.5" fill="#C8A84E" opacity="0.8"/>
-                  <circle cx="52" cy="70" r="3.5" fill="#FFFFFF"/>
-                  <circle cx="52" cy="70" r="1.5" fill="#C8A84E" opacity="0.8"/>
-                  <circle cx="-30" cy="15" r="2.5" fill="#C9D6E8" opacity="0.7"/>
-                  <circle cx="30" cy="15" r="2.5" fill="#C9D6E8" opacity="0.7"/>
+            <div className="mb-4 flex items-center gap-3">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" className="h-12 w-auto">
+                <g transform="translate(60, 75)">
+                  <line x1="-45" y1="60" x2="0" y2="-60" stroke="#C9D6E8" strokeWidth="2" opacity="0.7"/>
+                  <line x1="45" y1="60" x2="0" y2="-60" stroke="#C9D6E8" strokeWidth="2" opacity="0.7"/>
+                  <line x1="-25" y1="12" x2="25" y2="12" stroke="#C9D6E8" strokeWidth="2" opacity="0.7"/>
+                  <line x1="-25" y1="12" x2="0" y2="-60" stroke="#C9D6E8" strokeWidth="0.8" opacity="0.2"/>
+                  <line x1="25" y1="12" x2="0" y2="-60" stroke="#C9D6E8" strokeWidth="0.8" opacity="0.2"/>
+                  <circle cx="0" cy="-60" r="10" fill="#C8A84E" opacity="0.1"/>
+                  <circle cx="0" cy="-60" r="5" fill="#FFFFFF"/>
+                  <circle cx="0" cy="-60" r="2.5" fill="#C8A84E"/>
+                  <circle cx="-45" cy="60" r="4" fill="#FFFFFF"/>
+                  <circle cx="-45" cy="60" r="2" fill="#C8A84E" opacity="0.8"/>
+                  <circle cx="45" cy="60" r="4" fill="#FFFFFF"/>
+                  <circle cx="45" cy="60" r="2" fill="#C8A84E" opacity="0.8"/>
+                  <circle cx="-25" cy="12" r="3" fill="#C9D6E8" opacity="0.7"/>
+                  <circle cx="25" cy="12" r="3" fill="#C9D6E8" opacity="0.7"/>
                 </g>
-                <text x="155" y="295" fill="#FFFFFF" fontFamily="Inter, Arial, sans-serif" fontSize="32" fontWeight="500" textAnchor="start">AMOUS EDU</text>
               </svg>
+              <span className="text-xl font-semibold tracking-[0.25em] text-white">AMOUS EDU</span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               당신의 모든 순간을 특별한 이야기로.
