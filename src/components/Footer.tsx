@@ -10,8 +10,26 @@ export default function Footer() {
         <div className="py-16 grid md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <div className="text-2xl font-bold tracking-tight mb-4">
-              <span className="text-blue-400">A</span>MOUS
+            <div className="mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 370" className="h-10 w-auto">
+                <g transform="translate(300, 170)">
+                  <line x1="-52" y1="70" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="1.5" opacity="0.7"/>
+                  <line x1="52" y1="70" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="1.5" opacity="0.7"/>
+                  <line x1="-30" y1="15" x2="30" y2="15" stroke="#C9D6E8" strokeWidth="1.5" opacity="0.7"/>
+                  <line x1="-30" y1="15" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="0.5" opacity="0.21"/>
+                  <line x1="30" y1="15" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="0.5" opacity="0.21"/>
+                  <circle cx="0" cy="-80" r="12" fill="#C8A84E" opacity="0.08"/>
+                  <circle cx="0" cy="-80" r="4" fill="#FFFFFF"/>
+                  <circle cx="0" cy="-80" r="2" fill="#C8A84E"/>
+                  <circle cx="-52" cy="70" r="3.5" fill="#FFFFFF"/>
+                  <circle cx="-52" cy="70" r="1.5" fill="#C8A84E" opacity="0.8"/>
+                  <circle cx="52" cy="70" r="3.5" fill="#FFFFFF"/>
+                  <circle cx="52" cy="70" r="1.5" fill="#C8A84E" opacity="0.8"/>
+                  <circle cx="-30" cy="15" r="2.5" fill="#C9D6E8" opacity="0.7"/>
+                  <circle cx="30" cy="15" r="2.5" fill="#C9D6E8" opacity="0.7"/>
+                </g>
+                <text x="155" y="295" fill="#FFFFFF" fontFamily="Inter, Arial, sans-serif" fontSize="32" fontWeight="500" textAnchor="start">AMOUS EDU</text>
+              </svg>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               당신의 모든 순간을 특별한 이야기로.
@@ -48,7 +66,7 @@ export default function Footer() {
               {[
                 { label: "이주민·유학생 교육", href: "/services/immigrant" },
                 { label: "중장년·시니어 교육", href: "/services/senior" },
-                { label: "취업·진로 코칭", href: "/services/career" },
+                { label: "취업·직무 역량강화", href: "/services/career" },
               ].map((link) => (
                 <li key={link.label}>
                   <Link href={link.href} className="text-sm text-gray-400 hover:text-white transition-colors">
@@ -116,19 +134,19 @@ export default function Footer() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                 </svg>
-                <span className="text-sm text-gray-400">서울특별시 강남구<br />(상세 주소 입력)</span>
+                <span className="text-sm text-gray-400">경기도 김포시 김포한강9로75번길 66,<br />505-K71호(구래동, 국제프라자)</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                 </svg>
-                <span className="text-sm text-gray-400">02-XXX-XXXX</span>
+                <span className="text-sm text-gray-400">010-9922-0309</span>
               </li>
               <li className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                 </svg>
-                <span className="text-sm text-gray-400">contact@amous.co.kr</span>
+                <span className="text-sm text-gray-400">info.amous@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -138,8 +156,8 @@ export default function Footer() {
         <div className="border-t border-white/10 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-xs text-gray-500">
-              <p>에이머스 교육컨설팅 | 대표: OOO | 사업자등록번호: XXX-XX-XXXXX</p>
-              <p className="mt-1">&copy; 2025 AMOUS Education & Consulting. All rights reserved.</p>
+              <p>에이머스(AMOUS) 교육컨설팅 | 대표: 유수인 | 사업자등록번호: 323-34-01659</p>
+              <p className="mt-1">&copy; 2026 AMOUS Education &amp; Consulting. All rights reserved.</p>
             </div>
             <div className="flex gap-6 text-xs text-gray-500">
               <a href="#" className="hover:text-gray-300 transition-colors">개인정보처리방침</a>

@@ -26,6 +26,8 @@ interface ServiceData {
   icon: string | null;
   color: string | null;
   page_content: string | null;
+  curriculum: string | null;
+  image_url: string | null;
 }
 
 export default function ServicePage() {
@@ -157,6 +159,44 @@ export default function ServicePage() {
           </div>
         </section>
 
+        {/* Curriculum Section */}
+        {displayService.curriculum && (
+          <section className="py-20 lg:py-28 bg-gray-50">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="text-sm font-semibold tracking-widest uppercase text-navy-800 mb-3 block text-center">
+                  Curriculum
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">커리큘럼 소개</h2>
+                <div className="space-y-4">
+                  {displayService.curriculum.split("|").map((step, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                      className="flex items-start gap-4 bg-white rounded-xl p-6 shadow-sm"
+                    >
+                      <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${displayService.color || "from-blue-500 to-cyan-400"} text-white flex items-center justify-center flex-shrink-0 font-bold text-sm`}>
+                        {index + 1}
+                      </div>
+                      <div>
+                        <p className="text-gray-900 font-medium">{step.trim()}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </section>
+        )}
+
         {/* Instructors for this service */}
         {instructors.length > 0 && (
           <section className="py-20 lg:py-28 bg-gray-50">
@@ -186,16 +226,20 @@ export default function ServicePage() {
                     transition={{ duration: 0.5, delay: index * 0.15 }}
                     className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
                   >
-                    {/* Photo placeholder */}
+                    {/* Photo */}
                     <div className="aspect-[3/4] rounded-xl overflow-hidden bg-gradient-to-br from-navy-50 to-navy-100 mb-5 relative">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center text-navy-300">
-                          <svg className="w-14 h-14 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                          </svg>
-                          <p className="text-xs">강사 사진</p>
+                      {instructor.image_url ? (
+                        <img src={instructor.image_url} alt={instructor.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center text-navy-300">
+                            <svg className="w-14 h-14 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                            </svg>
+                            <p className="text-xs">강사 사진</p>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-1">{instructor.name}</h3>
                     <p className="text-sm text-navy-600 font-medium mb-3">{instructor.role}</p>

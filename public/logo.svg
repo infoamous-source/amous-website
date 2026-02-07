@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 370" width="600" height="370">
+  <g transform="translate(300, 170)">
+    <line x1="-52" y1="70" x2="0" y2="-80" stroke="#C9D6E8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="52" y1="70" x2="0" y2="-80" stroke="#C9D6E8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="-30" y1="15" x2="30" y2="15" stroke="#C9D6E8" stroke-width="1.5" opacity="0.7"/>
+    <line x1="-30" y1="15" x2="0" y2="-80" stroke="#C9D6E8" stroke-width="0.5" opacity="0.21"/>
+    <line x1="30" y1="15" x2="0" y2="-80" stroke="#C9D6E8" stroke-width="0.5" opacity="0.21"/>
+    <circle cx="0" cy="-80" r="12" fill="#C8A84E" opacity="0.08"/>
+    <circle cx="0" cy="-80" r="4" fill="#FFFFFF"/>
+    <circle cx="0" cy="-80" r="2" fill="#C8A84E"/>
+    <circle cx="-52" cy="70" r="3.5" fill="#FFFFFF"/>
+    <circle cx="-52" cy="70" r="1.5" fill="#C8A84E" opacity="0.8"/>
+    <circle cx="52" cy="70" r="3.5" fill="#FFFFFF"/>
+    <circle cx="52" cy="70" r="1.5" fill="#C8A84E" opacity="0.8"/>
+    <circle cx="-30" cy="15" r="2.5" fill="#C9D6E8" opacity="0.7"/>
+    <circle cx="30" cy="15" r="2.5" fill="#C9D6E8" opacity="0.7"/>
+  </g>
+  <text x="155" y="295" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="500" text-anchor="start" textLength="290" lengthAdjust="spacing">AMOUS EDU</text>
+</svg>

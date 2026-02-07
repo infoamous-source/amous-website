@@ -45,12 +45,25 @@ export default function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className={`text-2xl font-bold tracking-tight transition-colors ${
-              isScrolled ? "text-navy-800" : "text-white"
-            }`}>
-              <span className="text-navy-800">A</span>
-              <span className={isScrolled ? "text-gray-700" : "text-white"}>MOUS</span>
-            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 370" className="h-12 w-auto">
+              <g transform="translate(300, 170)">
+                <line x1="-52" y1="70" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="1.5" opacity="0.7"/>
+                <line x1="52" y1="70" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="1.5" opacity="0.7"/>
+                <line x1="-30" y1="15" x2="30" y2="15" stroke="#C9D6E8" strokeWidth="1.5" opacity="0.7"/>
+                <line x1="-30" y1="15" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="0.5" opacity="0.21"/>
+                <line x1="30" y1="15" x2="0" y2="-80" stroke="#C9D6E8" strokeWidth="0.5" opacity="0.21"/>
+                <circle cx="0" cy="-80" r="12" fill="#C8A84E" opacity="0.08"/>
+                <circle cx="0" cy="-80" r="4" fill={isScrolled ? "#F9FAFB" : "#FFFFFF"}/>
+                <circle cx="0" cy="-80" r="2" fill="#C8A84E"/>
+                <circle cx="-52" cy="70" r="3.5" fill={isScrolled ? "#F9FAFB" : "#FFFFFF"}/>
+                <circle cx="-52" cy="70" r="1.5" fill="#C8A84E" opacity="0.8"/>
+                <circle cx="52" cy="70" r="3.5" fill={isScrolled ? "#F9FAFB" : "#FFFFFF"}/>
+                <circle cx="52" cy="70" r="1.5" fill="#C8A84E" opacity="0.8"/>
+                <circle cx="-30" cy="15" r="2.5" fill="#C9D6E8" opacity="0.7"/>
+                <circle cx="30" cy="15" r="2.5" fill="#C9D6E8" opacity="0.7"/>
+              </g>
+              <text x="155" y="295" fill={isScrolled ? "#1A365D" : "#FFFFFF"} fontFamily="Inter, Arial, sans-serif" fontSize="32" fontWeight="500" textAnchor="start">AMOUS EDU</text>
+            </svg>
           </Link>
 
           {/* Desktop Nav */}
@@ -140,12 +153,19 @@ export default function Header() {
 
           {/* CTA + Mobile Toggle */}
           <div className="flex items-center gap-3">
-            <a
-              href="#contact"
-              className="hidden lg:inline-flex items-center px-6 py-2.5 bg-navy-800 text-white text-sm font-semibold rounded-full hover:bg-navy-900 transition-all hover:shadow-lg hover:shadow-navy-800/25"
+            <button
+              onClick={() => {
+                const el = document.getElementById("contact");
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth" });
+                } else {
+                  window.location.href = "/#contact";
+                }
+              }}
+              className="hidden lg:inline-flex items-center px-6 py-2.5 bg-navy-800 text-white text-sm font-semibold rounded-full hover:bg-navy-900 transition-all hover:shadow-lg hover:shadow-navy-800/25 cursor-pointer"
             >
               문의하기
-            </a>
+            </button>
 
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
@@ -226,13 +246,22 @@ export default function Header() {
                 </div>
               ))}
               <div className="pt-4">
-                <a
-                  href="#contact"
-                  onClick={() => setIsMobileOpen(false)}
-                  className="block w-full text-center px-6 py-3 bg-navy-800 text-white font-semibold rounded-full hover:bg-navy-900 transition-colors"
+                <button
+                  onClick={() => {
+                    setIsMobileOpen(false);
+                    setTimeout(() => {
+                      const el = document.getElementById("contact");
+                      if (el) {
+                        el.scrollIntoView({ behavior: "smooth" });
+                      } else {
+                        window.location.href = "/#contact";
+                      }
+                    }, 300);
+                  }}
+                  className="block w-full text-center px-6 py-3 bg-navy-800 text-white font-semibold rounded-full hover:bg-navy-900 transition-colors cursor-pointer"
                 >
                   문의하기
-                </a>
+                </button>
               </div>
             </nav>
           </motion.div>

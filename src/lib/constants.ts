@@ -7,7 +7,7 @@ export const NAV_LINKS = [
     children: [
       { label: "이주민·유학생", href: "/services/immigrant" },
       { label: "중장년·시니어", href: "/services/senior" },
-      { label: "취업·진로", href: "/services/career" },
+      { label: "취업·직무 역량강화", href: "/services/career" },
     ],
   },
   { label: "협업 사례", href: "/cases" },
@@ -55,7 +55,7 @@ export const SERVICES = [
   {
     id: 3,
     slug: "career",
-    title: "취업·진로",
+    title: "취업·직무 역량강화",
     subtitle: "꿈을 현실로",
     description:
       "면접·스피치·자기소개서 코칭부터 커리어 설계까지. 현직 아나운서 출신 전문가의 실전 노하우로 취업 성공률을 높입니다.",
@@ -95,7 +95,7 @@ export const AFFILIATES = [
 export const CONTACT_FIELDS = [
   "이주민·유학생 교육",
   "중장년·시니어 교육",
-  "취업·진로 코칭",
+  "취업·직무 역량강화",
   "행사 기획",
   "건축 CG/시각화",
   "기타",
@@ -104,5 +104,5 @@ export const CONTACT_FIELDS = [
 export const SERVICE_CATEGORIES = [
   { slug: "immigrant", label: "이주민·유학생" },
   { slug: "senior", label: "중장년·시니어" },
-  { slug: "career", label: "취업·진로" },
+  { slug: "career", label: "취업·직무 역량강화" },
 ];

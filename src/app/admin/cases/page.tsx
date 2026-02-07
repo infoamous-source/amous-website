@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 interface CaseItem {
   id: number;
@@ -16,7 +17,7 @@ interface CaseItem {
 const CATEGORIES = [
   { value: "immigrant", label: "이주민·유학생" },
   { value: "senior", label: "중장년·시니어" },
-  { value: "career", label: "취업·진로" },
+  { value: "career", label: "취업·직무 역량강화" },
 ];
 
 export default function AdminCasesPage() {
@@ -124,6 +125,11 @@ export default function AdminCasesPage() {
             <label className="block text-sm font-semibold text-gray-700 mb-1">성과 요약</label>
             <input type="text" value={editing.result || ""} onChange={(e) => setEditing({ ...editing, result: e.target.value })} className="w-full px-4 py-2 border rounded-lg" placeholder="교육 만족도 97% 등" />
           </div>
+          <ImageUploader
+            currentUrl={editing.image_url || null}
+            onUpload={(url) => setEditing({ ...editing, image_url: url })}
+            label="사례 이미지"
+          />
           <div className="flex items-center gap-2">
             <input type="checkbox" id="published" checked={editing.is_published} onChange={(e) => setEditing({ ...editing, is_published: e.target.checked })} />
             <label htmlFor="published" className="text-sm text-gray-700">공개</label>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 interface Instructor {
   id: number;
@@ -137,6 +138,11 @@ export default function AdminInstructorsPage() {
               placeholder="한국어 교육, 문화 교류"
             />
           </div>
+          <ImageUploader
+            currentUrl={editing.image_url || null}
+            onUpload={(url) => setEditing({ ...editing, image_url: url })}
+            label="강사 프로필 사진"
+          />
           <div className="flex gap-3">
             <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-navy-800 text-white rounded-lg hover:bg-navy-900 disabled:opacity-50">
               {saving ? "저장 중..." : isNew ? "추가" : "저장"}

@@ -21,6 +21,8 @@ export interface Service {
   icon: string | null;
   color: string | null;
   page_content: string | null;
+  curriculum: string | null;
+  image_url: string | null;
   sort_order: number;
   updated_at: string;
 }

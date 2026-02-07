@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 interface Service {
   id: number;
@@ -11,6 +12,8 @@ interface Service {
   icon: string;
   color: string;
   page_content: string;
+  curriculum: string;
+  image_url: string | null;
   sort_order: number;
 }
 
@@ -79,6 +82,16 @@ export default function AdminServicesPage() {
             <label className="block text-sm font-semibold text-gray-700 mb-1">서브페이지 내용</label>
             <textarea rows={8} value={editing.page_content || ""} onChange={(e) => setEditing({ ...editing, page_content: e.target.value })} className="w-full px-4 py-2 border rounded-lg" />
           </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">커리큘럼 (각 단계를 | 로 구분)</label>
+            <textarea rows={4} value={editing.curriculum || ""} onChange={(e) => setEditing({ ...editing, curriculum: e.target.value })} className="w-full px-4 py-2 border rounded-lg" placeholder="1단계: 기초 교육|2단계: 심화 과정|3단계: 실전 적용" />
+            <p className="text-xs text-gray-400 mt-1">파이프(|) 문자로 각 단계를 구분하세요.</p>
+          </div>
+          <ImageUploader
+            currentUrl={editing.image_url || null}
+            onUpload={(url) => setEditing({ ...editing, image_url: url })}
+            label="서비스 대표 이미지"
+          />
           <div className="flex gap-3">
             <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-navy-800 text-white rounded-lg hover:bg-navy-900 disabled:opacity-50">
               {saving ? "저장 중..." : "저장"}
