@@ -7,14 +7,18 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const { data, error } = await supabase.from("site_content").select("*");
-    if (error) throw error;
+    if (error) {
+      return NextResponse.json({ _error: error.message, _count: 0 }, { status: 500 });
+    }
     const result: Record<string, string> = {};
     data?.forEach((item: { id: string; value: string }) => {
       result[item.id] = item.value;
     });
+    result._count = String(data?.length || 0);
+    result._url = process.env.NEXT_PUBLIC_SUPABASE_URL?.slice(-10) || "unknown";
     return NextResponse.json(result);
-  } catch {
-    return NextResponse.json({}, { status: 500 });
+  } catch (e) {
+    return NextResponse.json({ _error: String(e) }, { status: 500 });
   }
 }
 
