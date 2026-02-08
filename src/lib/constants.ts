@@ -11,11 +11,12 @@ export const NAV_LINKS = [
     ],
   },
   { label: "협업 사례", href: "/cases" },
-  {
-    label: "블로그",
-    href: "https://blog.naver.com/amous_edu",
-    external: true,
-  },
+  // 블로그 카테고리 - 노출 OFF (데이터 유지)
+  // {
+  //   label: "블로그",
+  //   href: "https://blog.naver.com/amous_edu",
+  //   external: true,
+  // },
   {
     label: "계열사",
     href: "#affiliates",

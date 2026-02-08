@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import ImageUploader from "@/components/admin/ImageUploader";
 
 const CONTENT_KEYS = [
@@ -32,6 +32,7 @@ function parseImages(val: string): string[] {
 
 export default function SiteContentPage() {
   const [content, setContent] = useState<Record<string, string>>({});
+  const [savedContent, setSavedContent] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState<string | null>(null);
   const [message, setMessage] = useState("");
 
@@ -48,6 +49,7 @@ export default function SiteContentPage() {
           migrated.about_images = JSON.stringify([data.about_image]);
         }
         setContent(migrated);
+        setSavedContent(migrated);
       })
       .catch(() => {});
   }, []);
@@ -55,15 +57,17 @@ export default function SiteContentPage() {
   const handleSave = async (id: string, value?: string) => {
     setSaving(id);
     try {
+      const saveValue = value ?? content[id] ?? "";
       const res = await fetch("/api/site-content", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, value: value ?? content[id] ?? "" }),
+        body: JSON.stringify({ id, value: saveValue }),
       });
       if (res.ok) {
         if (value !== undefined) {
           setContent((prev) => ({ ...prev, [id]: value }));
         }
+        setSavedContent((prev) => ({ ...prev, [id]: saveValue }));
         setMessage("저장 완료!");
         setTimeout(() => setMessage(""), 2000);
       } else {
@@ -75,33 +79,32 @@ export default function SiteContentPage() {
     setSaving(null);
   };
 
-  const handleImageAdd = useCallback((key: string, url: string) => {
+  // 이미지 추가 (로컬 state만 업데이트, 저장 버튼으로 DB 반영)
+  const handleImageAdd = (key: string, url: string) => {
     const current = parseImages(content[key] || "");
     if (current.length >= 5) return;
     const updated = [...current, url];
-    const jsonVal = JSON.stringify(updated);
-    setContent((prev) => ({ ...prev, [key]: jsonVal }));
-    handleSave(key, jsonVal);
-  }, [content]);
+    setContent((prev) => ({ ...prev, [key]: JSON.stringify(updated) }));
+  };
 
-  const handleImageRemove = useCallback((key: string, index: number) => {
+  const handleImageRemove = (key: string, index: number) => {
     const current = parseImages(content[key] || "");
     const updated = current.filter((_, i) => i !== index);
-    const jsonVal = JSON.stringify(updated);
-    setContent((prev) => ({ ...prev, [key]: jsonVal }));
-    handleSave(key, jsonVal);
-  }, [content]);
+    setContent((prev) => ({ ...prev, [key]: JSON.stringify(updated) }));
+  };
 
-  const handleImageReorder = useCallback((key: string, fromIdx: number, toIdx: number) => {
+  const handleImageReorder = (key: string, fromIdx: number, toIdx: number) => {
     const current = parseImages(content[key] || "");
     const item = current[fromIdx];
     const updated = [...current];
     updated.splice(fromIdx, 1);
     updated.splice(toIdx, 0, item);
-    const jsonVal = JSON.stringify(updated);
-    setContent((prev) => ({ ...prev, [key]: jsonVal }));
-    handleSave(key, jsonVal);
-  }, [content]);
+    setContent((prev) => ({ ...prev, [key]: JSON.stringify(updated) }));
+  };
+
+  const hasUnsavedChanges = (key: string) => {
+    return content[key] !== savedContent[key];
+  };
 
   return (
     <div>
@@ -119,15 +122,32 @@ export default function SiteContentPage() {
         <div className="space-y-6">
           {IMAGE_GALLERY_KEYS.map((item) => {
             const images = parseImages(content[item.id] || "");
+            const unsaved = hasUnsavedChanges(item.id);
             return (
-              <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-6">
+              <div key={item.id} className={`bg-white rounded-xl border p-6 ${unsaved ? "border-amber-400" : "border-gray-200"}`}>
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h4 className="font-bold text-gray-900">{item.label}</h4>
                     <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
                   </div>
-                  <span className="text-sm font-medium text-navy-800">{images.length}/5장</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-navy-800">{images.length}/5장</span>
+                    <button
+                      onClick={() => handleSave(item.id, content[item.id] || "[]")}
+                      disabled={saving === item.id}
+                      className={`px-5 py-2 text-sm font-bold rounded-lg transition-all ${
+                        unsaved
+                          ? "bg-navy-800 text-white hover:bg-navy-900 animate-pulse"
+                          : "bg-navy-800 text-white hover:bg-navy-900"
+                      } disabled:opacity-50`}
+                    >
+                      {saving === item.id ? "저장 중..." : "저장"}
+                    </button>
+                  </div>
                 </div>
+                {unsaved && (
+                  <p className="text-xs text-amber-600 mb-3">* 변경사항이 있습니다. 저장 버튼을 눌러주세요.</p>
+                )}
 
                 {/* 등록된 이미지 목록 */}
                 {images.length > 0 && (
