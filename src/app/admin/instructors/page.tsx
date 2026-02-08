@@ -5,7 +5,6 @@ import ImageUploader from "@/components/admin/ImageUploader";
 
 interface Instructor {
   id: number;
-  service_id: number | null;
   service_ids: number[];
   name: string;
   role: string;
@@ -44,10 +43,9 @@ export default function AdminInstructorsPage() {
     const [iRes, sRes] = await Promise.all([fetch("/api/instructors"), fetch("/api/services")]);
     if (iRes.ok) {
       const data = await iRes.json();
-      // service_ids가 없으면 service_id로 초기화
       setInstructors(data.map((i: Instructor) => ({
         ...i,
-        service_ids: i.service_ids?.length ? i.service_ids : (i.service_id ? [i.service_id] : []),
+        service_ids: i.service_ids || [],
       })));
     }
     if (sRes.ok) setServices(await sRes.json());
@@ -60,12 +58,10 @@ export default function AdminInstructorsPage() {
       // 쉼표로 구분된 텍스트를 배열로 변환
       const specialtiesArr = specialtiesText.split(/[,、，]/).map((s) => s.trim()).filter(Boolean);
       const certificationsArr = certificationsText.split(/[,、，]/).map((s) => s.trim()).filter(Boolean);
-      // service_id도 첫번째 값으로 동기화 (기존 호환)
       const payload = {
         ...editing,
         specialties: specialtiesArr,
         certifications: certificationsArr,
-        service_id: editing.service_ids.length > 0 ? editing.service_ids[0] : null,
       };
       const method = isNew ? "POST" : "PUT";
       const res = await fetch("/api/instructors", {
@@ -101,7 +97,6 @@ export default function AdminInstructorsPage() {
 
   const newInstructor = (): Instructor => ({
     id: 0,
-    service_id: null,
     service_ids: [],
     name: "",
     role: "",
@@ -124,13 +119,12 @@ export default function AdminInstructorsPage() {
   };
 
   const getServiceNames = (inst: Instructor) => {
-    const ids = inst.service_ids?.length ? inst.service_ids : (inst.service_id ? [inst.service_id] : []);
+    const ids = inst.service_ids || [];
     return ids.map((id) => services.find((s) => s.id === id)?.title).filter(Boolean).join(", ") || "미지정";
   };
 
   const belongsToService = (inst: Instructor, serviceId: number) => {
-    if (inst.service_ids?.length) return inst.service_ids.includes(serviceId);
-    return inst.service_id === serviceId;
+    return (inst.service_ids || []).includes(serviceId);
   };
 
   // 필터링된 강사 목록
@@ -140,7 +134,7 @@ export default function AdminInstructorsPage() {
 
   // 미지정 강사
   const unassigned = instructors.filter((i) =>
-    (!i.service_ids || i.service_ids.length === 0) && !i.service_id
+    !i.service_ids || i.service_ids.length === 0
   );
 
   return (

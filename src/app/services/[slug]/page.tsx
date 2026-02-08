@@ -10,7 +10,6 @@ import { SERVICES, SERVICE_CATEGORIES } from "@/lib/constants";
 
 interface Instructor {
   id: number;
-  service_id: number | null;
   service_ids: number[] | null;
   name: string;
   role: string | null;
@@ -60,8 +59,7 @@ export default function ServicePage() {
             if (instrRes.ok) {
               const allInstr = await instrRes.json();
               const filtered = allInstr.filter((i: Instructor) => {
-                if (i.service_ids?.length) return i.service_ids.includes(found.id);
-                return i.service_id === found.id;
+                return i.service_ids?.includes(found.id);
               });
               setInstructors(filtered);
             }

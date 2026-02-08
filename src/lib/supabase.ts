@@ -29,7 +29,6 @@ export interface Service {
 
 export interface Instructor {
   id: number;
-  service_id: number | null;
   service_ids: number[] | null;
   name: string;
   role: string | null;
@@ -95,7 +94,7 @@ export async function getInstructorsByService(serviceId: number): Promise<Instru
   const { data } = await supabase
     .from("instructors")
     .select("*")
-    .eq("service_id", serviceId)
+    .contains("service_ids", [serviceId])
     .order("sort_order");
   return data || [];
 }

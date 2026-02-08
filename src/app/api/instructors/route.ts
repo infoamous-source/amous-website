@@ -8,13 +8,19 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const serviceId = searchParams.get("service_id");
-    let query = supabase.from("instructors").select("*").order("sort_order");
-    if (serviceId) {
-      query = query.eq("service_id", parseInt(serviceId));
-    }
+    const query = supabase.from("instructors").select("*").order("sort_order");
     const { data, error } = await query;
     if (error) throw error;
-    return NextResponse.json(data || []);
+    let result = data || [];
+    // service_id 필터 → service_ids 배열에서 검색
+    if (serviceId) {
+      const sid = parseInt(serviceId);
+      result = result.filter((i: Record<string, unknown>) => {
+        const ids = i.service_ids as number[] | null;
+        return ids && ids.includes(sid);
+      });
+    }
+    return NextResponse.json(result);
   } catch {
     return NextResponse.json([], { status: 500 });
   }
@@ -27,9 +33,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
     }
     const body = await request.json();
-    // id=0인 경우 제거 (새로 생성 시 auto increment)
-    const { id, ...insertData } = body;
-    void id;
+    // id=0과 service_id(존재하지 않는 컬럼) 제거
+    const { id, service_id, ...insertData } = body;
+    void id; void service_id;
     const { data, error } = await supabase.from("instructors").insert(insertData).select().single();
     if (error) {
       return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 500 });
@@ -47,7 +53,8 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
     }
     const body = await request.json();
-    const { id, ...updateData } = body;
+    const { id, service_id, ...updateData } = body;
+    void service_id;
     if (!id) {
       return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
     }
