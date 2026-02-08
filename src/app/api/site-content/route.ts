@@ -16,6 +16,7 @@ export async function GET() {
     });
     result._count = String(data?.length || 0);
     result._url = process.env.NEXT_PUBLIC_SUPABASE_URL?.slice(-10) || "unknown";
+    result._key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(-8) || "unknown";
     return NextResponse.json(result);
   } catch (e) {
     return NextResponse.json({ _error: String(e) }, { status: 500 });
