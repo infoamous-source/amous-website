@@ -29,12 +29,33 @@ export async function PUT(request: NextRequest) {
     if (!id || value === undefined) {
       return NextResponse.json({ error: "id와 value가 필요합니다." }, { status: 400 });
     }
-    const { error } = await supabase
+    // 먼저 기존 row가 있는지 확인
+    const { data: existing } = await supabase
       .from("site_content")
-      .upsert({ id, value, updated_at: new Date().toISOString() });
-    if (error) throw error;
+      .select("id")
+      .eq("id", id)
+      .single();
+
+    let error;
+    if (existing) {
+      // UPDATE
+      const result = await supabase
+        .from("site_content")
+        .update({ value, updated_at: new Date().toISOString() })
+        .eq("id", id);
+      error = result.error;
+    } else {
+      // INSERT
+      const result = await supabase
+        .from("site_content")
+        .insert({ id, value, updated_at: new Date().toISOString() });
+      error = result.error;
+    }
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
+  } catch (e) {
+    return NextResponse.json({ error: String(e) }, { status: 500 });
   }
 }
