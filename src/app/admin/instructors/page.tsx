@@ -32,6 +32,9 @@ export default function AdminInstructorsPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [filterServiceId, setFilterServiceId] = useState<number | null>(null);
+  // 태그 필드를 raw text로 관리 (쉼표 입력 문제 해결)
+  const [specialtiesText, setSpecialtiesText] = useState("");
+  const [certificationsText, setCertificationsText] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -54,9 +57,14 @@ export default function AdminInstructorsPage() {
     if (!editing) return;
     setSaving(true);
     try {
+      // 쉼표로 구분된 텍스트를 배열로 변환
+      const specialtiesArr = specialtiesText.split(/[,、，]/).map((s) => s.trim()).filter(Boolean);
+      const certificationsArr = certificationsText.split(/[,、，]/).map((s) => s.trim()).filter(Boolean);
       // service_id도 첫번째 값으로 동기화 (기존 호환)
       const payload = {
         ...editing,
+        specialties: specialtiesArr,
+        certifications: certificationsArr,
         service_id: editing.service_ids.length > 0 ? editing.service_ids[0] : null,
       };
       const method = isNew ? "POST" : "PUT";
@@ -67,13 +75,16 @@ export default function AdminInstructorsPage() {
       });
       if (res.ok) {
         setMessage(isNew ? "추가 완료!" : "저장 완료!");
-        setTimeout(() => setMessage(""), 2000);
+        setTimeout(() => setMessage(""), 3000);
         fetchData();
         setEditing(null);
         setIsNew(false);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setMessage(`저장 실패: ${errData.error || res.statusText}${errData.hint ? ` (힌트: ${errData.hint})` : ""}`);
       }
-    } catch {
-      setMessage("저장 실패");
+    } catch (e) {
+      setMessage(`저장 실패: ${String(e)}`);
     }
     setSaving(false);
   };
@@ -140,7 +151,7 @@ export default function AdminInstructorsPage() {
           <p className="text-gray-500 mt-1">강사 정보를 추가, 수정, 삭제합니다.</p>
         </div>
         <button
-          onClick={() => { setEditing(newInstructor()); setIsNew(true); }}
+          onClick={() => { setEditing(newInstructor()); setIsNew(true); setSpecialtiesText(""); setCertificationsText(""); }}
           className="px-4 py-2 bg-navy-800 text-white text-sm font-semibold rounded-lg hover:bg-navy-900"
         >
           + 강사 추가
@@ -199,21 +210,35 @@ export default function AdminInstructorsPage() {
             <label className="block text-sm font-semibold text-gray-700 mb-1">강의 분야 (쉼표로 구분)</label>
             <input
               type="text"
-              value={(editing.specialties || []).join(", ")}
-              onChange={(e) => setEditing({ ...editing, specialties: e.target.value.split(/[,、，]/).map((s) => s.trim()).filter(Boolean) })}
+              value={specialtiesText}
+              onChange={(e) => setSpecialtiesText(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg"
               placeholder="면접 컨설팅, 스피치 코칭, MC · 사회"
             />
+            {specialtiesText && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {specialtiesText.split(/[,、，]/).map((s) => s.trim()).filter(Boolean).map((tag, i) => (
+                  <span key={i} className="px-2.5 py-1 text-xs font-medium bg-navy-50 text-navy-700 rounded-full">{tag}</span>
+                ))}
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">보유 자격 (쉼표로 구분)</label>
             <input
               type="text"
-              value={(editing.certifications || []).join(", ")}
-              onChange={(e) => setEditing({ ...editing, certifications: e.target.value.split(/[,、，]/).map((s) => s.trim()).filter(Boolean) })}
+              value={certificationsText}
+              onChange={(e) => setCertificationsText(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg"
               placeholder="직업상담사 1급, 스피치지도사, 커리어코치 등"
             />
+            {certificationsText && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {certificationsText.split(/[,、，]/).map((s) => s.trim()).filter(Boolean).map((tag, i) => (
+                  <span key={i} className="px-2.5 py-1 text-xs font-medium bg-amber-50 text-amber-700 rounded-full">{tag}</span>
+                ))}
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">경력</label>
@@ -332,7 +357,7 @@ export default function AdminInstructorsPage() {
                     </h3>
                     <div className="space-y-2">
                       {groupInstructors.map((inst) => (
-                        <InstructorCard key={`${s.id}-${inst.id}`} inst={inst} services={services} getServiceNames={getServiceNames} onEdit={() => { setEditing(inst); setIsNew(false); }} onDelete={() => handleDelete(inst.id)} />
+                        <InstructorCard key={`${s.id}-${inst.id}`} inst={inst} services={services} getServiceNames={getServiceNames} onEdit={() => { setEditing(inst); setIsNew(false); setSpecialtiesText((inst.specialties || []).join(", ")); setCertificationsText((inst.certifications || []).join(", ")); }} onDelete={() => handleDelete(inst.id)} />
                       ))}
                     </div>
                   </div>
@@ -346,7 +371,7 @@ export default function AdminInstructorsPage() {
                   </h3>
                   <div className="space-y-2">
                     {unassigned.map((inst) => (
-                      <InstructorCard key={inst.id} inst={inst} services={services} getServiceNames={getServiceNames} onEdit={() => { setEditing(inst); setIsNew(false); }} onDelete={() => handleDelete(inst.id)} />
+                      <InstructorCard key={inst.id} inst={inst} services={services} getServiceNames={getServiceNames} onEdit={() => { setEditing(inst); setIsNew(false); setSpecialtiesText((inst.specialties || []).join(", ")); setCertificationsText((inst.certifications || []).join(", ")); }} onDelete={() => handleDelete(inst.id)} />
                     ))}
                   </div>
                 </div>
@@ -356,7 +381,7 @@ export default function AdminInstructorsPage() {
             // 필터: 선택된 그룹만
             <div className="space-y-2">
               {(filterServiceId === -1 ? unassigned : filteredInstructors).map((inst) => (
-                <InstructorCard key={inst.id} inst={inst} services={services} getServiceNames={getServiceNames} onEdit={() => { setEditing(inst); setIsNew(false); }} onDelete={() => handleDelete(inst.id)} />
+                <InstructorCard key={inst.id} inst={inst} services={services} getServiceNames={getServiceNames} onEdit={() => { setEditing(inst); setIsNew(false); setSpecialtiesText((inst.specialties || []).join(", ")); setCertificationsText((inst.certifications || []).join(", ")); }} onDelete={() => handleDelete(inst.id)} />
               ))}
               {(filterServiceId === -1 ? unassigned : filteredInstructors).length === 0 && (
                 <p className="text-gray-400 text-center py-10">해당 서비스에 등록된 강사가 없습니다.</p>

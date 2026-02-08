@@ -27,11 +27,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
     }
     const body = await request.json();
-    const { data, error } = await supabase.from("instructors").insert(body).select().single();
-    if (error) throw error;
+    // id=0인 경우 제거 (새로 생성 시 auto increment)
+    const { id, ...insertData } = body;
+    void id;
+    const { data, error } = await supabase.from("instructors").insert(insertData).select().single();
+    if (error) {
+      return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 500 });
+    }
     return NextResponse.json(data);
-  } catch {
-    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
+  } catch (e) {
+    return NextResponse.json({ error: String(e) }, { status: 500 });
   }
 }
 
@@ -52,10 +57,12 @@ export async function PUT(request: NextRequest) {
       .eq("id", id)
       .select()
       .single();
-    if (error) throw error;
+    if (error) {
+      return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 500 });
+    }
     return NextResponse.json(data);
-  } catch {
-    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
+  } catch (e) {
+    return NextResponse.json({ error: String(e) }, { status: 500 });
   }
 }
 
