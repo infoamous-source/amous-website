@@ -10,6 +10,9 @@ interface Instructor {
   role: string;
   description: string;
   specialties: string[];
+  teaching_fields: string;
+  career: string;
+  lecture_history: string;
   image_url: string | null;
   sort_order: number;
 }
@@ -78,6 +81,9 @@ export default function AdminInstructorsPage() {
     role: "",
     description: "",
     specialties: [],
+    teaching_fields: "",
+    career: "",
+    lecture_history: "",
     image_url: null,
     sort_order: instructors.length,
   });
@@ -127,6 +133,62 @@ export default function AdminInstructorsPage() {
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">소개</label>
             <textarea rows={3} value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} className="w-full px-4 py-2 border rounded-lg" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">강의 분야</label>
+            <textarea
+              rows={2}
+              value={editing.teaching_fields || ""}
+              onChange={(e) => setEditing({ ...editing, teaching_fields: e.target.value })}
+              className="w-full px-4 py-2 border rounded-lg"
+              placeholder="스피치 교육, 면접 코칭, 커뮤니케이션 역량강화 등"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">경력</label>
+            <div className="flex gap-2 mb-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const prefix = "現) ";
+                  const val = editing.career || "";
+                  const cursor = val.length > 0 ? val + "\n" + prefix : prefix;
+                  setEditing({ ...editing, career: cursor });
+                }}
+                className="px-3 py-1.5 text-xs font-bold bg-navy-800 text-white rounded-lg hover:bg-navy-900"
+              >
+                現 (현직)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const prefix = "前) ";
+                  const val = editing.career || "";
+                  const cursor = val.length > 0 ? val + "\n" + prefix : prefix;
+                  setEditing({ ...editing, career: cursor });
+                }}
+                className="px-3 py-1.5 text-xs font-bold bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+              >
+                前 (전직)
+              </button>
+            </div>
+            <textarea
+              rows={4}
+              value={editing.career || ""}
+              onChange={(e) => setEditing({ ...editing, career: e.target.value })}
+              className="w-full px-4 py-2 border rounded-lg"
+              placeholder={"現) OO대학교 겸임교수\n前) OO방송 아나운서\n前) OO기업 면접관"}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">출강 이력</label>
+            <textarea
+              rows={3}
+              value={editing.lecture_history || ""}
+              onChange={(e) => setEditing({ ...editing, lecture_history: e.target.value })}
+              className="w-full px-4 py-2 border rounded-lg"
+              placeholder={"OO기업 임직원 스피치 교육\nOO대학교 취업캠프 특강\nOO시 중장년 디지털 교육"}
+            />
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">전문 분야 (쉼표로 구분, 예: 면접, 스피치, 코칭)</label>

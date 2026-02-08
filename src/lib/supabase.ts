@@ -34,6 +34,9 @@ export interface Instructor {
   role: string | null;
   description: string | null;
   specialties: string[];
+  teaching_fields: string | null;
+  career: string | null;
+  lecture_history: string | null;
   image_url: string | null;
   sort_order: number;
   updated_at: string;

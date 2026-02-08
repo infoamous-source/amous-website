@@ -1,10 +1,36 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import CountUp from "@/components/ui/CountUp";
 import { STATS } from "@/lib/constants";
 
 export default function HeroSection() {
+  const [currentDate, setCurrentDate] = useState("");
+  const [heroImage, setHeroImage] = useState("");
+
+  useEffect(() => {
+    const updateDate = () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      setCurrentDate(`${y}.${m}.${d}`);
+    };
+    updateDate();
+    const timer = setInterval(updateDate, 60000);
+
+    // Fetch hero image from site_content
+    fetch("/api/site-content")
+      .then((r) => r.json())
+      .then((data: Record<string, string>) => {
+        if (data?.hero_image) setHeroImage(data.hero_image);
+      })
+      .catch(() => {});
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background */}
@@ -89,15 +115,19 @@ export default function HeroSection() {
             className="relative hidden lg:block"
           >
             <div className="relative aspect-[4/5] rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/10">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white/40">
-                  <svg className="w-20 h-20 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                  </svg>
-                  <p className="text-sm">대표 프로필 이미지</p>
-                  <p className="text-xs mt-1 text-white/30">740 x 920px 권장</p>
+              {heroImage ? (
+                <img src={heroImage} alt="대표 프로필" className="w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-white/40">
+                    <svg className="w-20 h-20 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    <p className="text-sm">대표 프로필 이미지</p>
+                    <p className="text-xs mt-1 text-white/30">Admin에서 등록해주세요</p>
+                  </div>
                 </div>
-              </div>
+              )}
               {/* Decorative elements */}
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-2xl opacity-20 blur-xl" />
               <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-violet-400 to-purple-400 rounded-2xl opacity-20 blur-xl" />
@@ -112,6 +142,9 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-20 lg:mt-28"
         >
+          {currentDate && (
+            <p className="text-center text-sm text-gray-400 mb-3">{currentDate} 현재</p>
+          )}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-8 md:p-10">
             {STATS.map((stat) => (
               <div key={stat.label} className="text-center">

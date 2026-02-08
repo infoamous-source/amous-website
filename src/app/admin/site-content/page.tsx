@@ -1,15 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 const CONTENT_KEYS = [
   { id: "hero_title", label: "Hero 메인 타이틀" },
   { id: "hero_subtitle", label: "Hero 서브 타이틀" },
+  { id: "hero_description", label: "Hero 설명" },
+  { id: "about_title", label: "About 타이틀" },
   { id: "about_description", label: "About 설명" },
   { id: "stat_students", label: "통계 - 수료생 수" },
   { id: "stat_partners", label: "통계 - 파트너 수" },
   { id: "stat_programs", label: "통계 - 프로그램 수" },
   { id: "stat_satisfaction", label: "통계 - 만족도" },
+];
+
+const IMAGE_KEYS = [
+  { id: "hero_image", label: "Hero 대표 프로필 이미지 (740 x 920px 권장)" },
+  { id: "about_image", label: "About 대표 활동 이미지 (800 x 600px 권장)" },
 ];
 
 export default function SiteContentPage() {
@@ -24,15 +32,18 @@ export default function SiteContentPage() {
       .catch(() => {});
   }, []);
 
-  const handleSave = async (id: string) => {
+  const handleSave = async (id: string, value?: string) => {
     setSaving(id);
     try {
       const res = await fetch("/api/site-content", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, value: content[id] || "" }),
+        body: JSON.stringify({ id, value: value ?? content[id] ?? "" }),
       });
       if (res.ok) {
+        if (value !== undefined) {
+          setContent((prev) => ({ ...prev, [id]: value }));
+        }
         setMessage("저장 완료!");
         setTimeout(() => setMessage(""), 2000);
       }
@@ -46,11 +57,30 @@ export default function SiteContentPage() {
     <div>
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900">전역 콘텐츠 관리</h2>
-        <p className="text-gray-500 mt-1">사이트 전반에 표시되는 텍스트를 수정합니다.</p>
+        <p className="text-gray-500 mt-1">사이트 전반에 표시되는 텍스트와 이미지를 수정합니다.</p>
       </div>
       {message && (
         <div className="mb-4 p-3 bg-emerald-50 text-emerald-700 rounded-lg text-sm">{message}</div>
       )}
+
+      {/* 이미지 관리 */}
+      <div className="mb-8">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">메인페이지 이미지</h3>
+        <div className="grid sm:grid-cols-2 gap-6">
+          {IMAGE_KEYS.map((item) => (
+            <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-6">
+              <ImageUploader
+                currentUrl={content[item.id] || null}
+                onUpload={(url) => handleSave(item.id, url)}
+                label={item.label}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 텍스트 관리 */}
+      <h3 className="text-lg font-bold text-gray-900 mb-4">텍스트 콘텐츠</h3>
       <div className="space-y-6">
         {CONTENT_KEYS.map((item) => (
           <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-6">

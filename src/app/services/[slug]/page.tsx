@@ -14,6 +14,9 @@ interface Instructor {
   role: string | null;
   description: string | null;
   specialties: string[];
+  teaching_fields: string | null;
+  career: string | null;
+  lecture_history: string | null;
   image_url: string | null;
 }
 
@@ -244,6 +247,38 @@ export default function ServicePage() {
                     <h3 className="text-lg font-bold text-gray-900 mb-1">{instructor.name}</h3>
                     <p className="text-sm text-navy-600 font-medium mb-3">{instructor.role}</p>
                     <p className="text-sm text-gray-600 leading-relaxed mb-4">{instructor.description}</p>
+                    {instructor.teaching_fields && (
+                      <div className="mb-3">
+                        <p className="text-xs font-semibold text-gray-500 mb-1">강의 분야</p>
+                        <p className="text-sm text-gray-700 leading-relaxed">{instructor.teaching_fields}</p>
+                      </div>
+                    )}
+                    {instructor.career && (
+                      <div className="mb-3">
+                        <p className="text-xs font-semibold text-gray-500 mb-1">경력</p>
+                        <div className="space-y-0.5">
+                          {instructor.career.split("\n").filter(Boolean).map((line, i) => (
+                            <p key={i} className="text-sm text-gray-700">
+                              {line.startsWith("現)") ? (
+                                <><span className="text-navy-800 font-bold">現</span>{line.slice(1)}</>
+                              ) : line.startsWith("前)") ? (
+                                <><span className="text-gray-400 font-bold">前</span>{line.slice(1)}</>
+                              ) : line}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {instructor.lecture_history && (
+                      <div className="mb-3">
+                        <p className="text-xs font-semibold text-gray-500 mb-1">출강 이력</p>
+                        <div className="space-y-0.5">
+                          {instructor.lecture_history.split("\n").filter(Boolean).map((line, i) => (
+                            <p key={i} className="text-sm text-gray-700">{line}</p>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <div className="flex flex-wrap gap-2">
                       {instructor.specialties?.map((tag) => (
                         <span key={tag} className="px-3 py-1 text-xs font-medium bg-navy-50 text-navy-700 rounded-full">

@@ -1,9 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import SectionHeading from "@/components/ui/SectionHeading";
 
 export default function AboutSection() {
+  const [aboutImage, setAboutImage] = useState("");
+
+  useEffect(() => {
+    fetch("/api/site-content")
+      .then((r) => r.json())
+      .then((data: Record<string, string>) => {
+        if (data?.about_image) setAboutImage(data.about_image);
+      })
+      .catch(() => {});
+  }, []);
   const strengths = [
     {
       title: "현직 아나운서 대표 직강",
@@ -61,15 +72,19 @@ export default function AboutSection() {
             transition={{ duration: 0.6 }}
           >
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-navy-50 to-navy-100">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-navy-300">
-                  <svg className="w-16 h-16 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v14.25a1.5 1.5 0 001.5 1.5z" />
-                  </svg>
-                  <p className="text-sm">대표 활동 이미지</p>
-                  <p className="text-xs mt-1 text-navy-200">800 x 600px 권장</p>
+              {aboutImage ? (
+                <img src={aboutImage} alt="대표 활동" className="w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-navy-300">
+                    <svg className="w-16 h-16 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v14.25a1.5 1.5 0 001.5 1.5z" />
+                    </svg>
+                    <p className="text-sm">대표 활동 이미지</p>
+                    <p className="text-xs mt-1 text-navy-200">Admin에서 등록해주세요</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
 
