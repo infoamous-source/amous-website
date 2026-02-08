@@ -10,12 +10,13 @@ import { SERVICES, SERVICE_CATEGORIES } from "@/lib/constants";
 
 interface Instructor {
   id: number;
+  service_id: number | null;
+  service_ids: number[] | null;
   name: string;
   role: string | null;
   description: string | null;
   specialties: string[];
   certifications: string[] | null;
-  service_ids: number[] | null;
   career: string | null;
   lecture_history: string | null;
   image_url: string | null;
