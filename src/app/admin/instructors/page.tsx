@@ -129,13 +129,13 @@ export default function AdminInstructorsPage() {
             <textarea rows={3} value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} className="w-full px-4 py-2 border rounded-lg" />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">전문 분야 (쉼표 구분)</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">전문 분야 (쉼표로 구분, 예: 면접, 스피치, 코칭)</label>
             <input
               type="text"
               value={(editing.specialties || []).join(", ")}
-              onChange={(e) => setEditing({ ...editing, specialties: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })}
+              onChange={(e) => setEditing({ ...editing, specialties: e.target.value.split(/[,、，]/).map((s) => s.trim()).filter(Boolean) })}
               className="w-full px-4 py-2 border rounded-lg"
-              placeholder="한국어 교육, 문화 교류"
+              placeholder="면접 컨설팅, 스피치 코칭, MC · 사회"
             />
           </div>
           <ImageUploader
