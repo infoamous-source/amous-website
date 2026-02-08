@@ -1,12 +1,44 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import SectionHeading from "@/components/ui/SectionHeading";
 import ServiceIcon from "@/components/ui/ServiceIcon";
 import { SERVICES } from "@/lib/constants";
 
+interface ServiceItem {
+  id: number;
+  slug: string;
+  title: string;
+  subtitle: string | null;
+  description: string | null;
+  icon: string;
+  color: string;
+  page_content: string | null;
+  sort_order: number;
+}
+
 export default function ServicesSection() {
+  const [services, setServices] = useState<ServiceItem[]>(SERVICES as unknown as ServiceItem[]);
+
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const res = await fetch("/api/services");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setServices(data);
+          }
+        }
+      } catch {
+        // Keep fallback constants
+      }
+    }
+    fetchServices();
+  }, []);
+
   return (
     <section id="services" className="py-24 lg:py-32 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,7 +49,7 @@ export default function ServicesSection() {
         />
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {SERVICES.map((service, index) => (
+          {services.map((service, index) => (
             <motion.div
               key={service.id}
               initial={{ opacity: 0, y: 30 }}
