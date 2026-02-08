@@ -26,8 +26,8 @@ export default function ImageUploader({ currentUrl, onUpload, label = "이미지
       setUploading(false);
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setError("10MB 이하 파일만 업로드 가능합니다.");
+    if (file.size > 50 * 1024 * 1024) {
+      setError("50MB 이하 파일만 업로드 가능합니다.");
       setUploading(false);
       return;
     }
@@ -106,7 +106,7 @@ export default function ImageUploader({ currentUrl, onUpload, label = "이미지
             </svg>
             <p className="text-sm text-gray-600 font-medium">클릭하여 이미지 선택</p>
             <p className="text-xs text-gray-400 mt-1">또는 파일을 드래그 앤 드롭</p>
-            <p className="text-xs text-gray-400 mt-1">JPG, PNG, GIF, WebP (최대 10MB)</p>
+            <p className="text-xs text-gray-400 mt-1">JPG, PNG, GIF, WebP (최대 50MB)</p>
           </div>
         )}
 

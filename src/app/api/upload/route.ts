@@ -20,8 +20,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "지원하지 않는 파일 형식입니다. (jpg, png, gif, webp, svg)" }, { status: 400 });
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: "파일 크기는 10MB 이하여야 합니다." }, { status: 400 });
+    if (file.size > 50 * 1024 * 1024) {
+      return NextResponse.json({ error: "파일 크기는 50MB 이하여야 합니다." }, { status: 400 });
     }
 
     const ext = file.name.split(".").pop() || "jpg";
