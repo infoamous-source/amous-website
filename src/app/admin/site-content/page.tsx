@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import ImageUploader from "@/components/admin/ImageUploader";
 
 const CONTENT_KEYS = [
@@ -15,10 +15,20 @@ const CONTENT_KEYS = [
   { id: "stat_satisfaction", label: "통계 - 만족도" },
 ];
 
-const IMAGE_KEYS = [
-  { id: "hero_image", label: "Hero 대표 프로필 이미지 (740 x 920px 권장)" },
-  { id: "about_image", label: "About 대표 활동 이미지 (800 x 600px 권장)" },
+const IMAGE_GALLERY_KEYS = [
+  { id: "hero_images", label: "Hero 대표 프로필 이미지", desc: "740 x 920px 권장 · 최대 5장 · 자동 롤링" },
+  { id: "about_images", label: "About 대표 활동 이미지", desc: "800 x 600px 권장 · 최대 5장 · 자동 롤링" },
 ];
+
+function parseImages(val: string): string[] {
+  if (!val) return [];
+  try {
+    const parsed = JSON.parse(val);
+    return Array.isArray(parsed) ? parsed : [val];
+  } catch {
+    return val ? [val] : [];
+  }
+}
 
 export default function SiteContentPage() {
   const [content, setContent] = useState<Record<string, string>>({});
@@ -28,7 +38,17 @@ export default function SiteContentPage() {
   useEffect(() => {
     fetch("/api/site-content")
       .then((res) => res.json())
-      .then(setContent)
+      .then((data: Record<string, string>) => {
+        // hero_image → hero_images 마이그레이션
+        const migrated = { ...data };
+        if (data.hero_image && !data.hero_images) {
+          migrated.hero_images = JSON.stringify([data.hero_image]);
+        }
+        if (data.about_image && !data.about_images) {
+          migrated.about_images = JSON.stringify([data.about_image]);
+        }
+        setContent(migrated);
+      })
       .catch(() => {});
   }, []);
 
@@ -46,12 +66,42 @@ export default function SiteContentPage() {
         }
         setMessage("저장 완료!");
         setTimeout(() => setMessage(""), 2000);
+      } else {
+        setMessage("저장 실패");
       }
     } catch {
       setMessage("저장 실패");
     }
     setSaving(null);
   };
+
+  const handleImageAdd = useCallback((key: string, url: string) => {
+    const current = parseImages(content[key] || "");
+    if (current.length >= 5) return;
+    const updated = [...current, url];
+    const jsonVal = JSON.stringify(updated);
+    setContent((prev) => ({ ...prev, [key]: jsonVal }));
+    handleSave(key, jsonVal);
+  }, [content]);
+
+  const handleImageRemove = useCallback((key: string, index: number) => {
+    const current = parseImages(content[key] || "");
+    const updated = current.filter((_, i) => i !== index);
+    const jsonVal = JSON.stringify(updated);
+    setContent((prev) => ({ ...prev, [key]: jsonVal }));
+    handleSave(key, jsonVal);
+  }, [content]);
+
+  const handleImageReorder = useCallback((key: string, fromIdx: number, toIdx: number) => {
+    const current = parseImages(content[key] || "");
+    const item = current[fromIdx];
+    const updated = [...current];
+    updated.splice(fromIdx, 1);
+    updated.splice(toIdx, 0, item);
+    const jsonVal = JSON.stringify(updated);
+    setContent((prev) => ({ ...prev, [key]: jsonVal }));
+    handleSave(key, jsonVal);
+  }, [content]);
 
   return (
     <div>
@@ -63,31 +113,82 @@ export default function SiteContentPage() {
         <div className="mb-4 p-3 bg-emerald-50 text-emerald-700 rounded-lg text-sm">{message}</div>
       )}
 
-      {/* 이미지 관리 */}
+      {/* 이미지 갤러리 관리 */}
       <div className="mb-8">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">메인페이지 이미지</h3>
-        <div className="grid sm:grid-cols-2 gap-6">
-          {IMAGE_KEYS.map((item) => (
-            <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-6">
-              <ImageUploader
-                currentUrl={content[item.id] || null}
-                onUpload={(url) => handleSave(item.id, url)}
-                label={item.label}
-              />
-              <div className="mt-3 flex items-center justify-between">
-                <span className="text-xs text-gray-400">
-                  {content[item.id] ? "✓ 이미지 등록됨" : "이미지 없음"}
-                </span>
-                <button
-                  onClick={() => handleSave(item.id, content[item.id] || "")}
-                  disabled={saving === item.id}
-                  className="px-4 py-1.5 bg-navy-800 text-white text-xs font-semibold rounded-lg hover:bg-navy-900 disabled:opacity-50"
-                >
-                  {saving === item.id ? "저장 중..." : "저장"}
-                </button>
+        <h3 className="text-lg font-bold text-gray-900 mb-4">메인페이지 이미지 (자동 롤링)</h3>
+        <div className="space-y-6">
+          {IMAGE_GALLERY_KEYS.map((item) => {
+            const images = parseImages(content[item.id] || "");
+            return (
+              <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 className="font-bold text-gray-900">{item.label}</h4>
+                    <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                  </div>
+                  <span className="text-sm font-medium text-navy-800">{images.length}/5장</span>
+                </div>
+
+                {/* 등록된 이미지 목록 */}
+                {images.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
+                    {images.map((url, idx) => (
+                      <div key={idx} className="relative group">
+                        <div className="aspect-[3/4] rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                          <img src={url} alt={`${item.label} ${idx + 1}`} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="absolute top-1 left-1 bg-navy-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                          {idx + 1}
+                        </div>
+                        <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {idx > 0 && (
+                            <button
+                              onClick={() => handleImageReorder(item.id, idx, idx - 1)}
+                              className="w-6 h-6 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-100"
+                              title="앞으로"
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                              </svg>
+                            </button>
+                          )}
+                          {idx < images.length - 1 && (
+                            <button
+                              onClick={() => handleImageReorder(item.id, idx, idx + 1)}
+                              className="w-6 h-6 bg-white rounded-full shadow flex items-center justify-center hover:bg-gray-100"
+                              title="뒤로"
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                              </svg>
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleImageRemove(item.id, idx)}
+                            className="w-6 h-6 bg-red-500 text-white rounded-full shadow flex items-center justify-center hover:bg-red-600"
+                            title="삭제"
+                          >
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 이미지 추가 업로더 */}
+                {images.length < 5 && (
+                  <ImageUploader
+                    currentUrl={null}
+                    onUpload={(url) => handleImageAdd(item.id, url)}
+                    label={`이미지 추가 (${5 - images.length}장 더 등록 가능)`}
+                  />
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

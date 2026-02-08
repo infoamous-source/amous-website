@@ -1,20 +1,47 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import SectionHeading from "@/components/ui/SectionHeading";
 
+function parseImages(val: string | undefined): string[] {
+  if (!val) return [];
+  try {
+    const parsed = JSON.parse(val);
+    return Array.isArray(parsed) ? parsed : [val];
+  } catch {
+    return val ? [val] : [];
+  }
+}
+
 export default function AboutSection() {
-  const [aboutImage, setAboutImage] = useState("");
+  const [aboutImages, setAboutImages] = useState<string[]>([]);
+  const [currentIdx, setCurrentIdx] = useState(0);
 
   useEffect(() => {
     fetch("/api/site-content")
       .then((r) => r.json())
       .then((data: Record<string, string>) => {
-        if (data?.about_image) setAboutImage(data.about_image);
+        // about_images (새 형식) 우선, 없으면 about_image (구 형식) 호환
+        const images = parseImages(data?.about_images);
+        if (images.length > 0) {
+          setAboutImages(images);
+        } else if (data?.about_image) {
+          setAboutImages([data.about_image]);
+        }
       })
       .catch(() => {});
   }, []);
+
+  // 자동 롤링 (5초 간격)
+  useEffect(() => {
+    if (aboutImages.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % aboutImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [aboutImages.length]);
+
   const strengths = [
     {
       title: "현직 아나운서 대표 직강",
@@ -64,7 +91,7 @@ export default function AboutSection() {
         />
 
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Image Placeholder */}
+          {/* Image with Rolling */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -72,8 +99,19 @@ export default function AboutSection() {
             transition={{ duration: 0.6 }}
           >
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-navy-50 to-navy-100">
-              {aboutImage ? (
-                <img src={aboutImage} alt="대표 활동" className="w-full h-full object-cover" />
+              {aboutImages.length > 0 ? (
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentIdx}
+                    src={aboutImages[currentIdx]}
+                    alt="대표 활동"
+                    className="absolute inset-0 w-full h-full object-cover"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                  />
+                </AnimatePresence>
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center text-navy-300">
@@ -83,6 +121,20 @@ export default function AboutSection() {
                     <p className="text-sm">대표 활동 이미지</p>
                     <p className="text-xs mt-1 text-navy-200">Admin에서 등록해주세요</p>
                   </div>
+                </div>
+              )}
+              {/* 이미지 인디케이터 */}
+              {aboutImages.length > 1 && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                  {aboutImages.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentIdx(idx)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        idx === currentIdx ? "bg-navy-800 w-6" : "bg-navy-800/30"
+                      }`}
+                    />
+                  ))}
                 </div>
               )}
             </div>

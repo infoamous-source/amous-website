@@ -1,13 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "@/components/ui/CountUp";
 import { STATS } from "@/lib/constants";
 
+function parseImages(val: string | undefined): string[] {
+  if (!val) return [];
+  try {
+    const parsed = JSON.parse(val);
+    return Array.isArray(parsed) ? parsed : [val];
+  } catch {
+    return val ? [val] : [];
+  }
+}
+
 export default function HeroSection() {
   const [currentDate, setCurrentDate] = useState("");
-  const [heroImage, setHeroImage] = useState("");
+  const [heroImages, setHeroImages] = useState<string[]>([]);
+  const [currentIdx, setCurrentIdx] = useState(0);
 
   useEffect(() => {
     const updateDate = () => {
@@ -20,16 +31,31 @@ export default function HeroSection() {
     updateDate();
     const timer = setInterval(updateDate, 60000);
 
-    // Fetch hero image from site_content
+    // Fetch hero images from site_content
     fetch("/api/site-content")
       .then((r) => r.json())
       .then((data: Record<string, string>) => {
-        if (data?.hero_image) setHeroImage(data.hero_image);
+        // hero_images (새 형식) 우선, 없으면 hero_image (구 형식) 호환
+        const images = parseImages(data?.hero_images);
+        if (images.length > 0) {
+          setHeroImages(images);
+        } else if (data?.hero_image) {
+          setHeroImages([data.hero_image]);
+        }
       })
       .catch(() => {});
 
     return () => clearInterval(timer);
   }, []);
+
+  // 자동 롤링 (4초 간격)
+  useEffect(() => {
+    if (heroImages.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % heroImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -107,7 +133,7 @@ export default function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Hero Image Placeholder */}
+          {/* Hero Image with Rolling */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -115,8 +141,19 @@ export default function HeroSection() {
             className="relative hidden lg:block"
           >
             <div className="relative aspect-[4/5] rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/10">
-              {heroImage ? (
-                <img src={heroImage} alt="대표 프로필" className="w-full h-full object-cover" />
+              {heroImages.length > 0 ? (
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentIdx}
+                    src={heroImages[currentIdx]}
+                    alt="대표 프로필"
+                    className="absolute inset-0 w-full h-full object-cover"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                  />
+                </AnimatePresence>
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center text-white/40">
@@ -126,6 +163,20 @@ export default function HeroSection() {
                     <p className="text-sm">대표 프로필 이미지</p>
                     <p className="text-xs mt-1 text-white/30">Admin에서 등록해주세요</p>
                   </div>
+                </div>
+              )}
+              {/* 이미지 인디케이터 */}
+              {heroImages.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {heroImages.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentIdx(idx)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        idx === currentIdx ? "bg-white w-6" : "bg-white/40"
+                      }`}
+                    />
+                  ))}
                 </div>
               )}
               {/* Decorative elements */}
