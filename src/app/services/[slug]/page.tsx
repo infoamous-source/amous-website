@@ -14,7 +14,8 @@ interface Instructor {
   role: string | null;
   description: string | null;
   specialties: string[];
-  teaching_fields: string | null;
+  certifications: string[] | null;
+  service_ids: number[] | null;
   career: string | null;
   lecture_history: string | null;
   image_url: string | null;
@@ -53,10 +54,15 @@ export default function ServicePage() {
             : svcData;
           if (found) {
             setService(found);
-            // Fetch instructors for this service
-            const instrRes = await fetch(`/api/instructors?service_id=${found.id}`);
+            // Fetch all instructors then filter by service_id or service_ids
+            const instrRes = await fetch(`/api/instructors`);
             if (instrRes.ok) {
-              setInstructors(await instrRes.json());
+              const allInstr = await instrRes.json();
+              const filtered = allInstr.filter((i: Instructor) => {
+                if (i.service_ids?.length) return i.service_ids.includes(found.id);
+                return i.service_id === found.id;
+              });
+              setInstructors(filtered);
             }
           }
         }
@@ -247,10 +253,28 @@ export default function ServicePage() {
                     <h3 className="text-lg font-bold text-gray-900 mb-1">{instructor.name}</h3>
                     <p className="text-sm text-navy-600 font-medium mb-3">{instructor.role}</p>
                     <p className="text-sm text-gray-600 leading-relaxed mb-4">{instructor.description}</p>
-                    {instructor.teaching_fields && (
+                    {instructor.specialties?.length > 0 && (
                       <div className="mb-3">
                         <p className="text-xs font-semibold text-gray-500 mb-1">강의 분야</p>
-                        <p className="text-sm text-gray-700 leading-relaxed">{instructor.teaching_fields}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {instructor.specialties.map((tag) => (
+                            <span key={tag} className="px-3 py-1 text-xs font-medium bg-navy-50 text-navy-700 rounded-full">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {instructor.certifications && instructor.certifications.length > 0 && (
+                      <div className="mb-3">
+                        <p className="text-xs font-semibold text-gray-500 mb-1">보유 자격</p>
+                        <div className="flex flex-wrap gap-2">
+                          {instructor.certifications.map((cert) => (
+                            <span key={cert} className="px-3 py-1 text-xs font-medium bg-amber-50 text-amber-700 rounded-full">
+                              {cert}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
                     {instructor.career && (
@@ -279,13 +303,6 @@ export default function ServicePage() {
                         </div>
                       </div>
                     )}
-                    <div className="flex flex-wrap gap-2">
-                      {instructor.specialties?.map((tag) => (
-                        <span key={tag} className="px-3 py-1 text-xs font-medium bg-navy-50 text-navy-700 rounded-full">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
                   </motion.div>
                 ))}
               </div>

@@ -74,6 +74,18 @@ export default function SiteContentPage() {
                 onUpload={(url) => handleSave(item.id, url)}
                 label={item.label}
               />
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-xs text-gray-400">
+                  {content[item.id] ? "✓ 이미지 등록됨" : "이미지 없음"}
+                </span>
+                <button
+                  onClick={() => handleSave(item.id, content[item.id] || "")}
+                  disabled={saving === item.id}
+                  className="px-4 py-1.5 bg-navy-800 text-white text-xs font-semibold rounded-lg hover:bg-navy-900 disabled:opacity-50"
+                >
+                  {saving === item.id ? "저장 중..." : "저장"}
+                </button>
+              </div>
             </div>
           ))}
         </div>
