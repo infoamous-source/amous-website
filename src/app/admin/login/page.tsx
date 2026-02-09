@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/admin';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +22,7 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        router.push("/admin");
+        router.push(redirectTo);
       } else {
         const data = await res.json();
         setError(data.error || "로그인에 실패했습니다.");
