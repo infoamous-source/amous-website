@@ -62,6 +62,7 @@ export interface Affiliate {
   description: string | null;
   features: string[];
   icon: string | null;
+  images: string[] | null;
   sort_order: number;
   updated_at: string;
 }
