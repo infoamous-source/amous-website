@@ -36,7 +36,15 @@ export async function POST(request: NextRequest) {
     // id=0과 service_id(존재하지 않는 컬럼) 제거
     const { id, service_id, ...insertData } = body;
     void id; void service_id;
-    const { data, error } = await supabase.from("instructors").insert(insertData).select().single();
+
+    // UUID와 instructor_code 자동 생성
+    const instructorData = {
+      ...insertData,
+      id: crypto.randomUUID(), // UUID 자동 생성
+      instructor_code: insertData.instructor_code || `INST${Date.now()}`, // 없으면 자동 생성
+    };
+
+    const { data, error } = await supabase.from("instructors").insert(instructorData).select().single();
     if (error) {
       return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 500 });
     }
