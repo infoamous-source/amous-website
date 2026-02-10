@@ -3,12 +3,21 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Bypass Next.js fetch cache so Supabase queries always hit the DB
+const fetchWithNoCache: typeof fetch = (url, options = {}) =>
+  fetch(url, { ...options, cache: "no-store" } as RequestInit);
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: { fetch: fetchWithNoCache },
+});
 
 // Server-side client with service_role key (bypasses RLS, use in API routes only)
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 export const supabaseAdmin = supabaseServiceRoleKey
-  ? createClient(supabaseUrl, supabaseServiceRoleKey)
+  ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+      global: { fetch: fetchWithNoCache },
+    })
   : supabase;
 
 // Type definitions
