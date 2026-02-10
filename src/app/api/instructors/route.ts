@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin as supabase } from "@/lib/supabase";
 import { verifyToken, COOKIE_NAME } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     }
     return NextResponse.json(result);
   } catch {
-    return NextResponse.json([], { status: 500 });
+    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
   }
 }
 
@@ -37,11 +37,9 @@ export async function POST(request: NextRequest) {
     const { id, service_id, ...insertData } = body;
     void id; void service_id;
 
-    // UUID와 instructor_code 자동 생성
     const instructorData = {
       ...insertData,
-      id: crypto.randomUUID(), // UUID 자동 생성
-      instructor_code: insertData.instructor_code || `INST${Date.now()}`, // 없으면 자동 생성
+      instructor_code: insertData.instructor_code || `INST${Date.now()}`,
     };
 
     const { data, error } = await supabase.from("instructors").insert(instructorData).select().single();

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin as supabase } from "@/lib/supabase";
 import { verifyToken, COOKIE_NAME } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
     return NextResponse.json(data || []);
   } catch {
-    return NextResponse.json([], { status: 500 });
+    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
   }
 }
 
@@ -34,12 +34,9 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabase.from("cases").insert(body).select().single();
     if (error) throw error;
     return NextResponse.json(data);
-  } catch (error: any) {
-    return NextResponse.json({
-      error: error.message || "서버 오류가 발생했습니다.",
-      details: error.details,
-      hint: error.hint
-    }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "서버 오류가 발생했습니다.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -62,12 +59,9 @@ export async function PUT(request: NextRequest) {
       .single();
     if (error) throw error;
     return NextResponse.json(data);
-  } catch (error: any) {
-    return NextResponse.json({
-      error: error.message || "서버 오류가 발생했습니다.",
-      details: error.details,
-      hint: error.hint
-    }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "서버 오류가 발생했습니다.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -85,11 +79,8 @@ export async function DELETE(request: NextRequest) {
     const { error } = await supabase.from("cases").delete().eq("id", parseInt(id));
     if (error) throw error;
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    return NextResponse.json({
-      error: error.message || "서버 오류가 발생했습니다.",
-      details: error.details,
-      hint: error.hint
-    }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "서버 오류가 발생했습니다.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

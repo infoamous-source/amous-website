@@ -54,7 +54,7 @@ export default function AdminAffiliatesPage() {
         setMessage(`저장 실패: ${errData.error || res.statusText}${errData.hint ? ` (힌트: ${errData.hint})` : ""}`);
         setTimeout(() => setMessage(""), 5000);
       }
-    } catch (error) {
+    } catch {
       setMessage("네트워크 오류가 발생했습니다.");
       setTimeout(() => setMessage(""), 3000);
     }

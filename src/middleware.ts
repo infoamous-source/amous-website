@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'amous-admin-secret-key-2024'
-);
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret) throw new Error("JWT_SECRET environment variable is required");
+const JWT_SECRET = new TextEncoder().encode(jwtSecret);
 const COOKIE_NAME = 'amous_admin_token';
 
 export async function middleware(request: NextRequest) {
@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
       // 토큰 검증
       await jwtVerify(token, JWT_SECRET);
       return NextResponse.next();
-    } catch (error) {
+    } catch {
       // 토큰 무효하면 로그인 페이지로
       const loginUrl = new URL('/admin/login', request.url);
       loginUrl.searchParams.set('redirect', pathname);

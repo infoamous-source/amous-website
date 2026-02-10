@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin as supabase } from "@/lib/supabase";
 import { verifyToken, COOKIE_NAME } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,7 @@ export async function GET() {
     });
     return NextResponse.json(result);
   } catch {
-    return NextResponse.json({}, { status: 500 });
+    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
   }
 }
 

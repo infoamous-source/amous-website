@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin as supabase } from "@/lib/supabase";
 import { verifyToken, COOKIE_NAME } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -48,8 +48,9 @@ export async function POST(request: NextRequest) {
     const { data: urlData } = supabase.storage.from("images").getPublicUrl(filePath);
 
     return NextResponse.json({ url: urlData.publicUrl, fileName });
-  } catch (err) {
-    console.error("Upload error:", err);
-    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
+  } catch (error: unknown) {
+    console.error("Upload error:", error);
+    const message = error instanceof Error ? error.message : "서버 오류가 발생했습니다.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
