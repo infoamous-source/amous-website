@@ -61,7 +61,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { id, service_id, ...updateData } = body;
     void service_id;
-    if (!id) {
+    if (id == null) {
       return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
     }
     const { data, error } = await supabase

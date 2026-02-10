@@ -31,7 +31,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
     }
     const body = await request.json();
-    const { data, error } = await supabase.from("cases").insert(body).select().single();
+    const { id: _, created_at: __, updated_at: ___, ...insertData } = body;
+    void _; void __; void ___;
+    const { data, error } = await supabase.from("cases").insert(insertData).select().single();
     if (error) throw error;
     return NextResponse.json(data);
   } catch (error: unknown) {
@@ -48,7 +50,7 @@ export async function PUT(request: NextRequest) {
     }
     const body = await request.json();
     const { id, ...updateData } = body;
-    if (!id) {
+    if (id == null) {
       return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
     }
     const { data, error } = await supabase
