@@ -46,9 +46,14 @@ export default function AdminServicesPage() {
         setTimeout(() => setMessage(""), 2000);
         fetchServices();
         setEditing(null);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setMessage(`저장 실패: ${errData.error || res.statusText}${errData.hint ? ` (힌트: ${errData.hint})` : ""}`);
+        setTimeout(() => setMessage(""), 5000);
       }
-    } catch {
-      setMessage("저장 실패");
+    } catch (error) {
+      setMessage("네트워크 오류가 발생했습니다.");
+      setTimeout(() => setMessage(""), 3000);
     }
     setSaving(false);
   };

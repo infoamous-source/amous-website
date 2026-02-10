@@ -42,7 +42,11 @@ export async function PUT(request: NextRequest) {
       .single();
     if (error) throw error;
     return NextResponse.json(data);
-  } catch {
-    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
+  } catch (error: any) {
+    return NextResponse.json({
+      error: error.message || "서버 오류가 발생했습니다.",
+      details: error.details,
+      hint: error.hint
+    }, { status: 500 });
   }
 }
