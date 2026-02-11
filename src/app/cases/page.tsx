@@ -121,6 +121,7 @@ export default function CasesPage() {
                         <img
                           src={item.image_url}
                           alt={item.title}
+                          loading="lazy"
                           className="absolute inset-0 w-full h-full object-cover"
                         />
                       ) : (
