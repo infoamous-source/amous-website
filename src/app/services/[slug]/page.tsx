@@ -58,9 +58,11 @@ export default function ServicePage() {
             const instrRes = await fetch(`/api/instructors`);
             if (instrRes.ok) {
               const allInstr = await instrRes.json();
-              const filtered = allInstr.filter((i: Instructor) => {
-                return i.service_ids?.includes(found.id);
-              });
+              const filtered = Array.isArray(allInstr)
+                ? allInstr.filter((i: Instructor) => {
+                    return i.service_ids?.includes(found.id);
+                  })
+                : [];
               setInstructors(filtered);
             }
           }
@@ -182,7 +184,7 @@ export default function ServicePage() {
                 </span>
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">커리큘럼 소개</h2>
                 <div className="space-y-4">
-                  {displayService.curriculum.split("|").map((step, index) => (
+                  {displayService.curriculum?.split("|").map((step, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, x: -20 }}

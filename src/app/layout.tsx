@@ -29,7 +29,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AMOUS 에이머스 교육컨설팅",
     description: "전문가와 데이터가 만드는 격이 다른 교육 솔루션",
+    url: "https://amous-website.vercel.app",
+    siteName: "에이머스 교육컨설팅",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
   },
 };
 

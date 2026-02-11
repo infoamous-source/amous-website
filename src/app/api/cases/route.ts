@@ -53,10 +53,14 @@ export async function PUT(request: NextRequest) {
     if (id == null) {
       return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
     }
+    const numId = parseInt(id);
+    if (isNaN(numId)) {
+      return NextResponse.json({ error: "유효하지 않은 ID입니다." }, { status: 400 });
+    }
     const { data, error } = await supabase
       .from("cases")
       .update({ ...updateData, updated_at: new Date().toISOString() })
-      .eq("id", id)
+      .eq("id", numId)
       .select()
       .single();
     if (error) throw error;
@@ -78,7 +82,11 @@ export async function DELETE(request: NextRequest) {
     if (!id) {
       return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
     }
-    const { error } = await supabase.from("cases").delete().eq("id", parseInt(id));
+    const numId = parseInt(id);
+    if (isNaN(numId)) {
+      return NextResponse.json({ error: "유효하지 않은 ID입니다." }, { status: 400 });
+    }
+    const { error } = await supabase.from("cases").delete().eq("id", numId);
     if (error) throw error;
     return NextResponse.json({ success: true });
   } catch (error: unknown) {

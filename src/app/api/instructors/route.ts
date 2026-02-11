@@ -44,11 +44,11 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase.from("instructors").insert(instructorData).select().single();
     if (error) {
-      return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 500 });
+      return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
     }
     return NextResponse.json(data);
-  } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
   }
 }
 
@@ -64,18 +64,22 @@ export async function PUT(request: NextRequest) {
     if (id == null) {
       return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
     }
+    const numId = parseInt(id);
+    if (isNaN(numId)) {
+      return NextResponse.json({ error: "유효하지 않은 ID입니다." }, { status: 400 });
+    }
     const { data, error } = await supabase
       .from("instructors")
       .update({ ...updateData, updated_at: new Date().toISOString() })
-      .eq("id", id)
+      .eq("id", numId)
       .select()
       .single();
     if (error) {
-      return NextResponse.json({ error: error.message, details: error.details, hint: error.hint }, { status: 500 });
+      return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
     }
     return NextResponse.json(data);
-  } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "서버 오류가 발생했습니다." }, { status: 500 });
   }
 }
 
@@ -90,7 +94,11 @@ export async function DELETE(request: NextRequest) {
     if (!id) {
       return NextResponse.json({ error: "id가 필요합니다." }, { status: 400 });
     }
-    const { error } = await supabase.from("instructors").delete().eq("id", parseInt(id));
+    const numId = parseInt(id);
+    if (isNaN(numId)) {
+      return NextResponse.json({ error: "유효하지 않은 ID입니다." }, { status: 400 });
+    }
+    const { error } = await supabase.from("instructors").delete().eq("id", numId);
     if (error) throw error;
     return NextResponse.json({ success: true });
   } catch {

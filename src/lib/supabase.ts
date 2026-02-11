@@ -13,6 +13,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 
 // Server-side client with service_role key (bypasses RLS, use in API routes only)
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+if (!supabaseServiceRoleKey) {
+  console.warn(
+    "[supabase] SUPABASE_SERVICE_ROLE_KEY is not set. " +
+    "supabaseAdmin will fall back to the anon client, " +
+    "and write operations protected by RLS will fail."
+  );
+}
 export const supabaseAdmin = supabaseServiceRoleKey
   ? createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false },

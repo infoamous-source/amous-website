@@ -44,7 +44,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-3 group" aria-label="에이머스 홈">
             {/* A Symbol */}
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150" className="h-10 sm:h-14 w-auto">
               <g transform="translate(60, 75)">

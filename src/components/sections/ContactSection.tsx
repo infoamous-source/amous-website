@@ -26,13 +26,28 @@ export default function ContactSection() {
     }));
   };
 
+  const [errorMsg, setErrorMsg] = useState("");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || "문의 전송에 실패했습니다.");
+      }
+      setIsSubmitted(true);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "문의 전송에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -207,6 +222,9 @@ export default function ContactSection() {
                       "문의 보내기"
                     )}
                   </button>
+                  {errorMsg && (
+                    <p className="mt-4 text-sm text-red-600">{errorMsg}</p>
+                  )}
                   <p className="mt-4 text-xs text-gray-400">
                     제출하신 정보는 문의 답변 목적으로만 사용되며, 개인정보 보호정책에 따라 안전하게 관리됩니다.
                   </p>
